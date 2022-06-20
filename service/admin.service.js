@@ -5,6 +5,7 @@ const userModel = require('../model/user.model');
 const employeeModel = require('../model/employee.model');
 const dealersModel = require('../model/dealers.model');
 const footerModel = require('../model/footer.model');
+const coordinatorModel = require('../model/coordinator.model');
 const { ApiError } = require('../objectCreator/objectCreator');
 const serviceUtils = require('../utils/service.util');
 
@@ -35,25 +36,56 @@ adminService.showGrievances = (mgmtData) => {
     return adminModel.showGrievances()
         .then(response => {
             if (mgmtData.userRole == 1) {
-                return response.filter(grievance => grievance.status == '01');
+                return coordinatorModel.getCoordinators()
+                    .then(res => {
+                        console.log(res)
+                        if (res[0].Coordinators.includes(mgmtData.PFNumber)) {
+
+                            return response.filter(grievance => (grievance.status == '00') || (grievance.status == '01'))
+                        }
+                        return response.filter(grievance => grievance.status == '01');
+                    })
             }
 
-            if (mgmtData.userRole == 2) {
-                return response.filter(grievance => grievance.status == '02' && grievance.departments.APODept == mgmtData.userDepartment);
+            else if (mgmtData.userRole == 2) {
+                return coordinatorModel.getCoordinators()
+                    .then(res => {
+                        console.log(res)
+                        if (res[0].Coordinators.includes(mgmtData.PFNumber)) {
+
+                            return response.filter(grievance => (grievance.status == '00') || (grievance.status == '02' && grievance.departments.APODept == mgmtData.userDepartment))
+                        }
+                        return response.filter(grievance => grievance.status == '02' && grievance.departments.APODept == mgmtData.userDepartment);
+                    })
             }
 
-            if (mgmtData.userRole == 3) {
+            else if (mgmtData.userRole == 3) {
                 return response.filter(grievance => grievance.status == '00');
             }
 
-            if (mgmtData.userRole == 4) {
-                return response.filter(grievance => grievance.status == '03' && grievance.departments.CHOSDept == mgmtData.userDepartment);
+            else if (mgmtData.userRole == 4) {
+                return coordinatorModel.getCoordinators()
+                    .then(res => {
+                        console.log(res)
+                        if (res[0].Coordinators.includes(mgmtData.PFNumber)) {
+
+                            return response.filter(grievance => (grievance.status == '00') || (grievance.status == '03' && grievance.departments.CHOSDept == mgmtData.userDepartment))
+                        }
+                        return response.filter(grievance => grievance.status == '03' && grievance.departments.CHOSDept == mgmtData.userDepartment);
+                    })
             }
 
-            if (mgmtData.userRole == 5) {
-                return response.filter(grievance => grievance.status == '04' && grievance.departments.dealerSection == mgmtData.userSection);
+            else if (mgmtData.userRole == 5) {
+                return coordinatorModel.getCoordinators()
+                    .then(res => {
+                        if (res.includes(mgmtData.PFNumber)) {
+
+                            return response.filter(grievance => (grievance.status == '00') || (grievance.status == '08') || (grievance.status == '-03') || (grievance.status == '04' && grievance.departments.dealerSection == mgmtData.userSection))
+                        }
+                        return response.filter(grievance => grievance.status == '04' && grievance.departments.dealerSection == mgmtData.userSection);
+                    })
             }
-            if (response) return response;
+            else if (response) { return response };
             throw new ApiError("Grievance not found", 404);
         });
 }
@@ -62,11 +94,27 @@ adminService.showReverseGrievances = (mgmtData) => {
     return adminModel.showReverseGrievances()
         .then(response => {
             if (mgmtData.userRole == 1) {
-                return response.filter(grievance => grievance.status == '07' || grievance.status == '-02');
+                return coordinatorModel.getCoordinators()
+                    .then(res => {
+                        console.log(res)
+                        if (res[0].Coordinators.includes(mgmtData.PFNumber)) {
+
+                            return response.filter(grievance => (grievance.status == '08') || (grievance.status == '-03') || (grievance.status == '07') || (grievance.status == '-02'))
+                        }
+                        return response.filter(grievance => grievance.status == '07' || grievance.status == '-02');
+                    })
             }
 
             if (mgmtData.userRole == 2) {
-                return response.filter(grievance => grievance.status == '06' && grievance.departments.APODept == mgmtData.userDepartment);
+                return coordinatorModel.getCoordinators()
+                    .then(res => {
+                        console.log(res)
+                        if (res[0].Coordinators.includes(mgmtData.PFNumber)) {
+
+                            return response.filter(grievance => (grievance.status == '08') || (grievance.status == '-03') || (grievance.status == '06' && grievance.departments.APODept == mgmtData.userDepartment))
+                        }
+                        return response.filter(grievance => grievance.status == '06' && grievance.departments.APODept == mgmtData.userDepartment);
+                    })
             }
 
             if (mgmtData.userRole == 3) {
@@ -74,8 +122,25 @@ adminService.showReverseGrievances = (mgmtData) => {
             }
 
             if (mgmtData.userRole == 4) {
-                console.log(response.filter(grievance => grievance.status == '05'));
-                return response.filter(grievance => grievance.status == '05' && grievance.departments.CHOSDept == mgmtData.userDepartment);
+                return coordinatorModel.getCoordinators()
+                    .then(res => {
+                        console.log(res)
+                        if (res[0].Coordinators.includes(mgmtData.PFNumber)) {
+
+                            return response.filter(grievance => (grievance.status == '08') || (grievance.status == '-03') || (grievance.status == '05' && grievance.departments.CHOSDept == mgmtData.userDepartment))
+                        }
+                        return response.filter(grievance => grievance.status == '05' && grievance.departments.CHOSDept == mgmtData.userDepartment);
+                    })
+            }
+            if (mgmtData.userRole == 4) {
+                return coordinatorModel.getCoordinators()
+                    .then(res => {
+                        if (res.includes(mgmtData.PFNumber)) {
+
+                            return response.filter(grievance => (grievance.status == '08') || (grievance.status == '-03'))
+                        }
+                        return [];
+                    })
             }
             if (response) return response;
             throw new ApiError("Grievance not found", 404);
@@ -86,6 +151,37 @@ adminService.verifyGrievance = (refKey, editedData, userRole) => {
     if (userRole > 5) { throw new ApiError("Unauthorized", 401); }
     return userModel.getOneGrievance(refKey)
         .then(response => {
+            if (userRole != 6) {
+                if (response.status == '08') {
+                    response.status = '09';
+                    response.dates.end = currentdate;
+                    let mailDetails = {
+                        from: 'Sahaayata - Southern Railways Grievance Portal',
+                        to: response.Email,
+                        subject: 'Southern Railway Grievance portal - Grievance Submission',
+                        text: "your grievance has been verified successfully",
+                        html: `<html lang="en">
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+                    </head>
+                    <body style="font-family: Arial, Helvetica, sans-serif;">
+                                    <h2 style="color:blue;text-align:center;margin-top:50px;"> Your Grievance successfully submitted.</h2>
+                                    <div style="text-align: center;">
+                                    <p>
+                                        Hi `+ response.userName + ` . Your Grievance has been verified successfully.
+                                        Thank you 
+                                    </p>
+                                </div>
+               
+                    </body>
+                    </html>`
+
+                    };
+                    serviceUtils.sendMail(mailDetails)
+                }
+            }
             if (userRole == 1) {
                 if (response.status == '01') {
                     response.status = '02';
@@ -154,6 +250,12 @@ adminService.verifyGrievance = (refKey, editedData, userRole) => {
                     response.status = '05';
                 }
             }
+            if (userRole != 6) {
+                if (response.status == '00') {
+                    response.status = '01';
+                    response.dates.start = currentdate;
+                }
+            }
             return adminModel.changeGrievanceDetails(refKey, response).then(response => {
                 if (response) return response;
                 throw new ApiError("Grievance not verified", 403);
@@ -164,6 +266,40 @@ adminService.rejectGrievance = (refKey, userRole) => {
     if (userRole > 5) { throw new ApiError("Unauthorized", 401); }
     return userModel.getOneGrievance(refKey)
         .then(response => {
+            if (response.status == '-03') {
+                response.dates.end = currentdate;
+                response.status = '-04';
+                let remark = '';
+                for (var i = 0; i < response.Remarks.length; i++) {
+                    remark = remark + response.Remarks[i] + '. ';
+                }
+                let mailDetails = {
+                    from: 'Sahaayata - Southern Railways Grievance Portal',
+                    to: response.Email,
+                    subject: 'Southern Railway Grievance portal - Grievance Submission',
+                    text: "Your grievance has been Regretted",
+                    html: `<html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+                </head>
+                <body style="font-family: Arial, Helvetica, sans-serif;">
+                                <h2 style="color:blue;text-align:center;margin-top:50px;"> Your Grievance successfully submitted.</h2>
+                                <div style="text-align: center;">
+                                <p>
+                                    Hi `+ response.userName + ` . Your Grievance has been regretted.
+                                    `+ remark + `
+                                    Thank you 
+                                </p>
+                            </div>
+           
+                </body>
+                </html>`
+
+                };
+                serviceUtils.sendMail(mailDetails)
+            }
             if (userRole == 1) {
                 if (response.status == '-02' || response.status == '01') {
                     response.status = '-03';
@@ -186,7 +322,7 @@ adminService.rejectGrievance = (refKey, userRole) => {
                         from: 'Sahaayata - Southern Railways Grievance Portal',
                         to: response.Email,
                         subject: 'Southern Railway Grievance portal - Grievance Submission',
-                        text: "your grievance has been Regreted",
+                        text: "Your grievance has been Regretted",
                         html: `<html lang="en">
                     <head>
                         <meta charset="UTF-8">
@@ -197,7 +333,7 @@ adminService.rejectGrievance = (refKey, userRole) => {
                                     <h2 style="color:blue;text-align:center;margin-top:50px;"> Your Grievance successfully submitted.</h2>
                                     <div style="text-align: center;">
                                     <p>
-                                        Hi `+ response.userName + ` . Your Grievance has been regreted.
+                                        Hi `+ response.userName + ` . Your Grievance has been regretted.
                                         `+ remark + `
                                         Thank you 
                                     </p>
