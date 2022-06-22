@@ -122,6 +122,7 @@ const FooterObj = {
     "eMail ID": { type: String },
 }
 const CoordinatorObj = {
+    "ID": { type: String, default: "COORDINATORS", unique: true },
     "Coordinators": { type: [{ type: String, default: 'alert info' }] },
 }
 const connection = {};
