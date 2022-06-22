@@ -293,9 +293,21 @@ userService.getUserById = (PFNumber) => {
         });
 }
 userService.editUserById = (PFNumber, userData) => {
-    console.log("edit user service ", userData)
-    return userModel.editUserById(PFNumber, userData)
-        .then(response => ({ message: `User #${response.PFNumber} Edited successfully` }))
+    console.log(userData.coordinatorAccess)
+    if (userData.coordinatorAccess) {
+        return coordinatorModel.addCoordinators(PFNumber).then(re => {
+            return userModel.editUserById(PFNumber, userData)
+                .then(response => ({ message: `User #${response.PFNumber} Edited successfully` }))
+        })
+    }
+    else {
+        return coordinatorModel.removeCoordinators(PFNumber).then(re => {
+
+            return userModel.editUserById(PFNumber, userData)
+                .then(response => ({ message: `User #${response.PFNumber} Edited successfully` }))
+        })
+    }
+
 }
 userService.forgotPassword = (PFNumber) => {
     return userModel.getUserById(PFNumber)
